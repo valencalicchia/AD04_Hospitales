@@ -1,0 +1,132 @@
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import Dtos.*;
+import Helpers.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+
+public class Ejercicio1 {
+
+
+	  public static void main(String[] args) {
+	        try (Session session = HibernateHelper.getSessionFactory().openSession()) {
+	            displayHeader();
+	            processNewRooms(session);
+	        }
+	    }
+
+
+	    private static void displayHeader() {
+	        System.out.println("Ejercicio 1 - Insertar Nuevas salas");
+	        System.out.println("Calicchia Valentina Alessandra");
+	        System.out.println("=======================================");
+	    }
+
+
+	    private static void processNewRooms(Session session) {
+	        List<NuevasSalas> newRooms = fetchNewRooms(session);
+	        List<Sala> salasToInsert = transformToSala(newRooms);
+	        saveNewRooms(salasToInsert, session);
+	        listRooms(session);
+	    }
+
+
+	    private static List<NuevasSalas> fetchNewRooms(Session session) {
+	        NuevasSalasHelper nuevasSalasDao = new NuevasSalasHelper(session);
+	        return nuevasSalasDao.getAll();
+	    }
+
+
+	    private static List<Sala> transformToSala(List<NuevasSalas> nuevasSalas) {
+	        List<Sala> salas = new ArrayList<>();
+	        for (NuevasSalas ns : nuevasSalas) {
+	            salas.add(convertToSala(ns));
+	        }
+	        return salas;
+	    }
+
+
+	    private static Sala convertToSala(NuevasSalas nuevaSala) {
+	        return new Sala(new SalaId(nuevaSala.getId().getHospitalCod(), nuevaSala.getId().getSalaCod()),
+	                null, nuevaSala.getId().getNombre(), nuevaSala.getId().getNumCama(), null, null);
+	    }
+
+
+	    private static void saveNewRooms(List<Sala> salas, Session session) {
+	        Transaction transaction = session.beginTransaction();
+	        SalaHelper salaDao = new SalaHelper(session);
+	        HospitalesHelper hospitalesDao = new HospitalesHelper(session);
+
+	        for (Sala sala : salas) {
+	            if (isValidSala(sala, salaDao, hospitalesDao)) {
+	                salaDao.insertSala(sala);
+	                System.out.println("Sala added: " + sala);
+	            } else {
+	                System.out.println("Sala skipped: " + sala);
+	            }
+	        }
+
+	        transaction.commit();
+	    }
+
+
+	    private static boolean isValidSala(Sala sala, SalaHelper salaDao, HospitalesHelper hospitalesDao) {
+	        List<String> errors = new ArrayList<>();
+	        boolean isValid = true;
+
+	        if (salaDao.existSala(sala.getId())) {
+	            errors.add("Sala already exists: " + sala);
+	            isValid = false;
+	        }
+	        if (!hospitalesDao.existingHospital(sala.getId().getHospitalCod())) {
+	            errors.add("Hospital does not exist: " + sala);
+	            isValid = false;
+	        }
+
+	        errors.forEach(error -> System.out.println("\t" + error));
+	        return isValid;
+	    }
+
+
+	    private static void listRooms(Session session) {
+	    	SalaHelper salaDao = new SalaHelper(session);
+	    	HospitalesHelper hospitalesDao = new HospitalesHelper(session);
+
+	        List<Sala> rooms = salaDao.getAll();
+	        Map<Byte, String> hospitalNames = hospitalesDao.traerIdAndNombre();
+
+	        printRoomList(rooms, hospitalNames);
+	    }
+
+
+	    private static void printRoomList(List<Sala> rooms, Map<Byte, String> hospitalNames) {
+	        System.out.println("=".repeat(85));
+	        System.out.println("LISTADO DE SALAS");
+	        System.out.println("=".repeat(85));
+	        System.out.printf("%-25s %-25s %10s %10s %10s%n", "HOSPITAL", "SALA", "CAMAS", "OCUPACIÓN", "PLANTILLA");
+	        System.out.println("=".repeat(85));
+
+	        int currentHospitalId = 0;
+	        for (Sala room : rooms) {
+	            if (currentHospitalId != room.getId().getHospitalCod()) {
+	                currentHospitalId = room.getId().getHospitalCod();
+	                if (currentHospitalId != 0) {
+	                    System.out.println();
+	                }
+	            }
+
+	            String hospital = String.format("(%d) %s", room.getId().getHospitalCod(), hospitalNames.get(room.getId().getHospitalCod()));
+	            String sala = String.format("(%d) %s", room.getId().getSalaCod(), room.getNombre());
+	            String camas = String.format("%-10s", room.getNumCama());
+	            String ocupacion = String.format("%-10s", room.getOcupacions().size());
+	            String plantilla = String.format("%-10s", room.getPlantillas().size());
+
+	            System.out.printf("%-25s %-25s %10s %10s %10s%n", hospital, sala, camas, ocupacion, plantilla);
+	        }
+	    }
+	
+}

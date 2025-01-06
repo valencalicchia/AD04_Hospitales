@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 5 ene 2025, 21:02:14 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.Doctor" optimistic-lock="none" table="DOCTOR">
+        <id name="doctorNo" type="short">
+            <column name="DOCTOR_NO" precision="3" scale="0"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="apellido" type="string">
+            <column length="13" name="APELLIDO"/>
+        </property>
+        <property name="especialidad" type="string">
+            <column length="16" name="ESPECIALIDAD"/>
+        </property>
+    </class>
+</hibernate-mapping>

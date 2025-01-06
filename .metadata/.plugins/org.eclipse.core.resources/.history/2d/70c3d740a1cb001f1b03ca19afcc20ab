@@ -1,0 +1,56 @@
+package Helpers;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class HibernateHelper {
+	private static StandardServiceRegistry registry;
+	private static SessionFactory sessionFactory;
+
+	/**
+	 * Constructor privado para evitar la creación de instancias de esta clase.
+	 */
+	private HibernateHelper() {
+	}
+
+	/**
+	 * Obtiene una instancia de {@link SessionFactory} para la conexión con la base
+	 * de datos. Si la instancia no ha sido creada aún, la inicializa.
+	 * 
+	 * @return La instancia de {@link SessionFactory} configurada.
+	 */
+	public static synchronized SessionFactory getSessionFactory() {
+		if (sessionFactory == null) {
+			try {
+				registry = new StandardServiceRegistryBuilder().configure().build();
+				MetadataSources sources = new MetadataSources(registry);
+				Metadata metadata = sources.getMetadataBuilder().build();
+				sessionFactory = metadata.getSessionFactoryBuilder().build();
+			} catch (Exception e) {
+				e.printStackTrace();
+				if (registry != null) {
+					StandardServiceRegistryBuilder.destroy(registry);
+				}
+			}
+		}
+		return sessionFactory;
+	}
+
+	/**
+	 * Cierra la {@link SessionFactory} y destruye el registro de servicios de
+	 * Hibernate.
+	 */
+	public static void shutdown() {
+		if (sessionFactory != null) {
+			sessionFactory.close();
+		}
+		if (registry != null) {
+			StandardServiceRegistryBuilder.destroy(registry);
+		}
+	}
+}

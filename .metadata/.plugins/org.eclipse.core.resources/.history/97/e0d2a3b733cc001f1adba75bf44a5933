@@ -1,0 +1,122 @@
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+import Dtos.*;
+import Helpers.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+
+public class Ejercicio1 {
+
+
+	public static void main(String[] args) {
+		SessionFactory factory = HibernateHelper.getSessionFactory();
+		Session session = factory.openSession();
+		System.out.println("Ejercicio 1 - Insertar Nuevas salas");
+		System.out.println("Calicchia Valentina Alessandra");
+		System.out.println("=======================================");
+
+		nuevasSalasBBDD(session);
+	}
+
+
+	private static void listarSalas(Session session) {
+
+		SalaHelper salaHelper = new SalaHelper(session);
+		HospitalesHelper hospitalesHelper = new HospitalesHelper(session);
+		List<Sala> lista = salaHelper.getAll();
+		Map<Byte, String> diccionarioHospital = hospitalesHelper.traerIdAndNombre();
+
+		System.out.println("=".repeat(85));
+		System.out.println("LISTADO DE SALAS");
+		System.out.println("=".repeat(85));
+		System.out.printf("%-25s %-25s %10s %10s %10s%n", "HOSPITAL", "SALA", "CAMAS", "OCUPACIÓN", "PLANTILLA");
+		System.out.println("=".repeat(85));
+
+		int idActual = 0;
+		for (Sala sa : lista) {
+			if (idActual != sa.getId().getHospitalCod()) {
+				idActual = sa.getId().getHospitalCod();
+				if (idActual != 0) {
+					System.out.println();
+				}
+			}
+
+			String hospital = String.format("(%d) %s", sa.getId().getHospitalCod(),
+					diccionarioHospital.get(sa.getId().getHospitalCod()));
+			String sala = String.format("(%d) %s", sa.getId().getSalaCod(), sa.getNombre());
+			String camas = String.format("%10s", sa.getNumCama());
+			String ocupacion = String.format("%10s", sa.getOcupacions().size());
+			String plantilla = String.format("%10s", sa.getPlantillas().size());
+
+			camas = String.format("%-10s", camas).replace(' ', ' ');
+			ocupacion = String.format("%-10s", ocupacion).replace(' ', ' ');
+			plantilla = String.format("%-10s", plantilla).replace(' ', ' ');
+
+			System.out.printf("%-25s %-25s %10s %10s %10s%n", hospital, sala, camas, ocupacion, plantilla);
+		}
+
+	}
+
+	private static void guardarNuevasSalas(List<Sala> nuevasSalasTranfort, Session session) {
+		session.beginTransaction();
+		HospitalesHelper hospitalesHelper = new HospitalesHelper(session);
+		SalaHelper salaHelper = new SalaHelper(session);
+		for (Sala sala : nuevasSalasTranfort) {
+			System.out.println("Insertando (" + sala.getId().getHospitalCod() + ", " + sala.getId().getSalaCod() + ", "
+					+ sala.getNombre() + ", " + sala.getNumCama() + ")");
+			List<String> listaErrores = new ArrayList<String>();
+			boolean error = false;
+			if (salaHelper.existSala(sala.getId())) {
+				listaErrores.add(
+						"sala(" + sala.getId().getHospitalCod() + ", " + sala.getId().getSalaCod() + ") YA EXISTE");
+				error = true;
+			}
+			if (!hospitalesHelper.existingHospital(sala.getId().getHospitalCod())) {
+				listaErrores.add("Código de hospital " + sala.getId().getHospitalCod() + " no existe");
+				error = true;
+			}
+
+			if (error) {
+				for (String err : listaErrores) {
+					System.out.print("\t" + err);
+				}
+				System.out.print(", No se insertará...\n");
+				System.out.println();
+			} else {
+				salaHelper.insertSala(sala);
+				System.out.println("\tsala(" + sala.getId().getHospitalCod() + ", " + sala.getId().getSalaCod() + ") "
+						+ "AÑADIDA...\n");
+			}
+		}
+		session.getTransaction().commit();
+		listarSalas(session);
+
+	}
+
+
+	private static void transformarNuevasSalas(List<NuevasSalas> salasNuevasAll, Session session) {
+		List<Sala> list = new ArrayList<Sala>();
+		for (NuevasSalas a : salasNuevasAll) {
+			list.add(createSala(a));
+		}
+		guardarNuevasSalas(list, session);
+	}
+
+
+	private static Sala createSala(NuevasSalas a) {
+		return new Sala(new SalaId(a.getId().getHospitalCod(), a.getId().getSalaCod()), null, a.getId().getNombre(),
+				a.getId().getNumCama(), null, null);
+	}
+
+
+	private static void nuevasSalasBBDD(Session session) {
+		NuevasSalasHelper nuevasSalasHelper = new NuevasSalasHelper(session);
+		List<NuevasSalas> nuevas = nuevasSalasHelper.getAll();
+		transformarNuevasSalas(nuevas, session);
+	}
+	
+} 

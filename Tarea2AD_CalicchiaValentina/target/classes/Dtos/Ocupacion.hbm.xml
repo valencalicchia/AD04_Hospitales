@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 5 ene 2025, 21:02:14 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.Ocupacion" optimistic-lock="none" table="OCUPACION">
+        <composite-id class="Dtos.OcupacionId" name="id">
+            <key-property name="inscripcion" type="int">
+                <column name="INSCRIPCION" precision="5" scale="0"/>
+            </key-property>
+            <key-property name="hospitalCod" type="byte">
+                <column name="HOSPITAL_COD" precision="2" scale="0"/>
+            </key-property>
+            <key-property name="salaCod" type="byte">
+                <column name="SALA_COD" precision="2" scale="0"/>
+            </key-property>
+        </composite-id>
+        <many-to-one class="Dtos.Hospitales" fetch="select" insert="false" name="hospitales" update="false">
+            <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+        </many-to-one>
+        <many-to-one class="Dtos.Sala" fetch="select" insert="false" name="sala" update="false">
+            <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+            <column name="SALA_COD" not-null="true" precision="2" scale="0"/>
+        </many-to-one>
+        <many-to-one class="Dtos.Enfermo" fetch="select" insert="false" name="enfermo" update="false">
+            <column name="INSCRIPCION" not-null="true" precision="5" scale="0"/>
+        </many-to-one>
+        <property name="cama" type="java.lang.Short">
+            <column name="CAMA" precision="4" scale="0"/>
+        </property>
+    </class>
+</hibernate-mapping>

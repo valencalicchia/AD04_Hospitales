@@ -1,0 +1,34 @@
+package Helpers;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import Dtos.Sala;
+import Dtos.SalaId;
+
+import java.util.List;
+
+public class SalaHelper {
+	
+	Session session;
+
+	public SalaHelper(Session session) {
+		this.session = session;
+	}
+
+	public List<Sala> getAll() {
+		return session.createQuery("from Sala s order by s.id.hospitalCod, s.id.salaCod", Sala.class).getResultList();
+	}
+
+	public boolean existSala(SalaId salaId) {
+		Sala sala = session.find(Sala.class, salaId);
+		if (sala == null)
+			return false;
+		return true;
+	}
+
+	public Sala insertSala(Sala sala) {
+		session.persist(sala);
+		return sala;
+	}
+}
