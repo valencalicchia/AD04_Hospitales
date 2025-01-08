@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 8 ene 2025, 21:07:46 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.Doctor" optimistic-lock="none" table="DOCTOR">
+        <id name="doctorNo" type="short">
+            <column name="DOCTOR_NO" precision="3" scale="0"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="apellido" type="string">
+            <column length="13" name="APELLIDO"/>
+        </property>
+        <property name="especialidad" type="string">
+            <column length="16" name="ESPECIALIDAD"/>
+        </property>
+        <set fetch="select" inverse="true" lazy="true" name="hospitaleses" table="DOCTOR_HOSPITAL">
+            <key>
+                <column name="DOCTOR_NO" not-null="true" precision="3" scale="0"/>
+            </key>
+            <many-to-many entity-name="Dtos.Hospitales">
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

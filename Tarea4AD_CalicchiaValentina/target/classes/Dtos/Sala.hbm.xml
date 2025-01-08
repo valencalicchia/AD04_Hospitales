@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 8 ene 2025, 21:07:46 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.Sala" optimistic-lock="none" table="SALA">
+        <composite-id class="Dtos.SalaId" name="id">
+            <key-property name="hospitalCod" type="byte">
+                <column name="HOSPITAL_COD" precision="2" scale="0"/>
+            </key-property>
+            <key-property name="salaCod" type="byte">
+                <column name="SALA_COD" precision="2" scale="0"/>
+            </key-property>
+        </composite-id>
+        <many-to-one class="Dtos.Hospitales" fetch="select" insert="false" name="hospitales" update="false">
+            <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+        </many-to-one>
+        <property name="nombre" type="string">
+            <column length="20" name="NOMBRE"/>
+        </property>
+        <property name="numCama" type="java.lang.Short">
+            <column name="NUM_CAMA" precision="3" scale="0"/>
+        </property>
+        <set fetch="select" inverse="true" lazy="true" name="ocupacions" table="OCUPACION">
+            <key>
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+                <column name="SALA_COD" not-null="true" precision="2" scale="0"/>
+            </key>
+            <one-to-many class="Dtos.Ocupacion"/>
+        </set>
+        <set fetch="select" inverse="true" lazy="true" name="plantillas" table="PLANTILLA">
+            <key>
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+                <column name="SALA_COD" not-null="true" precision="2" scale="0"/>
+            </key>
+            <one-to-many class="Dtos.Plantilla"/>
+        </set>
+    </class>
+</hibernate-mapping>

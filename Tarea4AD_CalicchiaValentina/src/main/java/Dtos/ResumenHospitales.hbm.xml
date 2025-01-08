@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 8 ene 2025, 21:07:46 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.ResumenHospitales" optimistic-lock="none" table="RESUMEN_HOSPITALES">
+        <id name="hospitalCod" type="byte">
+            <column name="HOSPITAL_COD" precision="2" scale="0"/>
+            <generator class="foreign">
+                <param name="property">hospitales</param>
+            </generator>
+        </id>
+        <one-to-one class="Dtos.Hospitales" constrained="true" name="hospitales"/>
+        <property name="numDoctores" type="java.lang.Short">
+            <column name="NUM_DOCTORES" precision="3" scale="0"/>
+        </property>
+        <property name="numSalas" type="java.lang.Short">
+            <column name="NUM_SALAS" precision="3" scale="0"/>
+        </property>
+        <property name="numEnfermos" type="java.lang.Short">
+            <column name="NUM_ENFERMOS" precision="3" scale="0"/>
+        </property>
+        <property name="numPlantilla" type="java.lang.Short">
+            <column name="NUM_PLANTILLA" precision="3" scale="0"/>
+        </property>
+    </class>
+</hibernate-mapping>

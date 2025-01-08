@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 8 ene 2025, 21:07:46 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.Hospitales" optimistic-lock="none" table="HOSPITALES">
+        <id name="hospitalCod" type="byte">
+            <column name="HOSPITAL_COD" precision="2" scale="0"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="nombre" type="string">
+            <column length="20" name="NOMBRE"/>
+        </property>
+        <property name="direccion" type="string">
+            <column length="20" name="DIRECCION"/>
+        </property>
+        <property name="telefono" type="string">
+            <column length="8" name="TELEFONO"/>
+        </property>
+        <property name="numCama" type="java.lang.Short">
+            <column name="NUM_CAMA" precision="3" scale="0"/>
+        </property>
+        <set fetch="select" inverse="true" lazy="true" name="salas" table="SALA">
+            <key>
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+            </key>
+            <one-to-many class="Dtos.Sala"/>
+        </set>
+        <set fetch="select" inverse="true" lazy="true" name="ocupacions" table="OCUPACION">
+            <key>
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+            </key>
+            <one-to-many class="Dtos.Ocupacion"/>
+        </set>
+        <set fetch="select" inverse="false" lazy="true" name="doctors" table="DOCTOR_HOSPITAL">
+            <key>
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+            </key>
+            <many-to-many entity-name="Dtos.Doctor">
+                <column name="DOCTOR_NO" not-null="true" precision="3" scale="0"/>
+            </many-to-many>
+        </set>
+        <set fetch="select" inverse="true" lazy="true" name="plantillas" table="PLANTILLA">
+            <key>
+                <column name="HOSPITAL_COD" not-null="true" precision="2" scale="0"/>
+            </key>
+            <one-to-many class="Dtos.Plantilla"/>
+        </set>
+        <one-to-one class="Dtos.ResumenHospitales" name="resumenHospitales"/>
+    </class>
+</hibernate-mapping>

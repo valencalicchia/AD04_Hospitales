@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 8 ene 2025, 21:07:46 by Hibernate Tools 5.6.15.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="Dtos.Enfermo" optimistic-lock="none" table="ENFERMO">
+        <id name="inscripcion" type="int">
+            <column name="INSCRIPCION" precision="5" scale="0"/>
+            <generator class="assigned"/>
+        </id>
+        <property name="apellido" type="string">
+            <column length="15" name="APELLIDO"/>
+        </property>
+        <property name="direccion" type="string">
+            <column length="20" name="DIRECCION"/>
+        </property>
+        <property name="fechaNac" type="date">
+            <column length="7" name="FECHA_NAC"/>
+        </property>
+        <property name="s" type="string">
+            <column length="1" name="S"/>
+        </property>
+        <property name="nss" type="java.lang.Integer">
+            <column name="NSS" precision="9" scale="0"/>
+        </property>
+        <set fetch="select" inverse="true" lazy="true" name="ocupacions" table="OCUPACION">
+            <key>
+                <column name="INSCRIPCION" not-null="true" precision="5" scale="0"/>
+            </key>
+            <one-to-many class="Dtos.Ocupacion"/>
+        </set>
+    </class>
+</hibernate-mapping>

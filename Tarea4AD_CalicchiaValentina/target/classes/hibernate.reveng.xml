@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.org/dtd/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+  <table-filter match-schema="TEMA4EL" match-name="DOCTOR"/>
+  <table-filter match-schema="TEMA4EL" match-name="DOCTOR_HOSPITAL"/>
+  <table-filter match-schema="TEMA4EL" match-name="ENFERMO"/>
+  <table-filter match-schema="TEMA4EL" match-name="HOSPITALES"/>
+  <table-filter match-schema="TEMA4EL" match-name="NUEVAS_SALAS"/>
+  <table-filter match-schema="TEMA4EL" match-name="OCUPACION"/>
+  <table-filter match-schema="TEMA4EL" match-name="PLANTILLA"/>
+  <table-filter match-schema="TEMA4EL" match-name="RESUMEN_HOSPITALES"/>
+  <table-filter match-schema="TEMA4EL" match-name="SALA"/>
+</hibernate-reverse-engineering>
