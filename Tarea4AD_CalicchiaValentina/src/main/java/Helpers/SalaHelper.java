@@ -30,7 +30,7 @@ public class SalaHelper {
         return sala;
     }
 
-    public List<Object[]> obtenerPlantillaPorSala(int hospitalCod, int salaCod) {
+    public List<Object[]> getPlantillaSala(int hospitalCod, int salaCod) {
         String hql = """
             SELECT p.apellido, p.salario 
             FROM Plantilla p 

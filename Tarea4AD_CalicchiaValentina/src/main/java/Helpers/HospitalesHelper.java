@@ -64,7 +64,7 @@ public class HospitalesHelper {
 		return result != null ? result.shortValue() : 0; 
 	}
 
-	public List<Sala> obtenerSalasHospital(int hospitalCod) {
+	public List<Sala> getSalasHospital(int hospitalCod) {
 
 		return session.createQuery("FROM Sala s WHERE s.hospitales.hospitalCod = :hospitalCod ORDER BY s.id.salaCod",
 				Sala.class).setParameter("hospitalCod", hospitalCod).list();

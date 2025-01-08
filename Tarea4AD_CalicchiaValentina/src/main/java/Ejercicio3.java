@@ -57,7 +57,7 @@ public class Ejercicio3 {
         System.out.println(SEPARADOR_GUIONES);
 
         try {
-            List<Sala> salas = hospitalesHelper.obtenerSalasHospital(hospital.getHospitalCod());
+            List<Sala> salas = hospitalesHelper.getSalasHospital(hospital.getHospitalCod());
             double totalSalarioHospital = 0.0;
             int totalSalas = 0;
 
@@ -87,7 +87,7 @@ public class Ejercicio3 {
         System.out.println(SEPARADOR_SALAS);
 
         try {
-            List<Object[]> plantilla = salaHelper.obtenerPlantillaPorSala(sala.getId().getHospitalCod(), sala.getId().getSalaCod());
+            List<Object[]> plantilla = salaHelper.getPlantillaSala(sala.getId().getHospitalCod(), sala.getId().getSalaCod());
             if (plantilla.isEmpty()) {
                 System.out.printf("    %d  %-20s  LA SALA NO TIENE PLANTILLA%n", sala.getId().getSalaCod(), sala.getNombre());
             } else {

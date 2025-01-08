@@ -1,4 +1,6 @@
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,6 +12,9 @@ public class Ejercicio4 {
 
     private static final String SEPARADOR_IGUALES = "=".repeat(61);
     private static final String AUTOR = "Calicchia Valentina Alessandra";
+    
+    private static final Logger logger = Logger.getLogger(Ejercicio4.class.getName());
+
 
     public static void main(String[] args) {
 
@@ -26,25 +31,25 @@ public class Ejercicio4 {
             consulta4(session);
 
         } catch (Exception e) {
-            System.err.println("Error en la ejecución: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error general de la aplicación.", e);
         } finally {
             HibernateHelper.shutdown();
         }
     }
 
     public static void consulta1(Session session) {
-        System.out.println("\nConsulta 1:");
+        System.out.println("Consulta 1:");
 
-        String hql1 = """
+        String consulta = """
                 SELECT h.id, h.nombre, COUNT(p), AVG(p.salario)
                 FROM Hospitales h JOIN h.plantillas p
                 GROUP BY h.id, h.nombre
                 """;
 
-        System.out.println(hql1);
+        System.out.println(consulta);
 
         try {
-            Query<Object[]> query = session.createQuery(hql1, Object[].class);
+            Query<Object[]> query = session.createQuery(consulta, Object[].class);
             for (Object[] resultado : query.getResultList()) {
                 byte hospitalCod = (Byte) resultado[0];
                 String nombre = (String) resultado[1];
@@ -57,22 +62,24 @@ public class Ejercicio4 {
         } catch (Exception e) {
             System.err.println("Error en consulta 1: " + e.getMessage());
         }
+        
+        System.out.println();
     }
 
     public static void consulta2(Session session) {
-        System.out.println("\nConsulta 2:");
+        System.out.println("Consulta 2:");
 
 
-        String hql2 = """
+        String consulta = """
                 SELECT h.id, h.nombre, r.numPlantilla
                 FROM Hospitales h JOIN h.resumenHospitales r
                 WHERE r.numPlantilla = (SELECT MAX(r2.numPlantilla) FROM ResumenHospitales r2)
                 """;
 
-        System.out.println(hql2);
+        System.out.println(consulta);
 
         try {
-            Query<Object[]> query = session.createQuery(hql2, Object[].class);
+            Query<Object[]> query = session.createQuery(consulta, Object[].class);
             Object[] maxPlantilla = query.uniqueResult();
 
             if (maxPlantilla != null) {
@@ -81,35 +88,36 @@ public class Ejercicio4 {
                 Short numPlantilla = (Short) maxPlantilla[2];
 
                 System.out.printf("Código: %d, Nombre: %s, Nº Empleados: %d%n", hospitalCod, nombre, numPlantilla);
-            } else {
-                System.out.println("No se encontró ningún hospital con plantilla.");
-            }
+            } 
         } catch (Exception e) {
             System.err.println("Error en consulta 2: " + e.getMessage());
         }
+        
+        System.out.println();
     }
 
     public static void consulta3(Session session) {
-        System.out.println("\nConsulta 3:");
+        System.out.println("Consulta 3:");
 
-        String hql3 = "SELECT h.nombre FROM Hospitales h WHERE h.plantillas IS EMPTY";
+        String consulta = "SELECT h.nombre FROM Hospitales h WHERE h.plantillas IS EMPTY";
 
-        System.out.println(hql3);
+        System.out.println(consulta);
 
         try {
-            Query<String> query = session.createQuery(hql3, String.class);
+            Query<String> query = session.createQuery(consulta, String.class);
             for (String nombre : query.getResultList()) {
                 System.out.println("Nombre: " + nombre);
             }
         } catch (Exception e) {
             System.err.println("Error en consulta 3: " + e.getMessage());
         }
+        System.out.println();
     }
 
     public static void consulta4(Session session) {
-        System.out.println("\nConsulta 4:");
+        System.out.println("Consulta 4:");
 
-        String hql4 = """
+        String consulta = """
                 SELECT h.nombre, s.nombre, e.apellido, o.cama
                 FROM Hospitales h 
                 JOIN h.salas s 
@@ -118,10 +126,10 @@ public class Ejercicio4 {
                 ORDER BY h.nombre
                 """;
 
-        System.out.println(hql4);
+        System.out.println(consulta);
 
         try {
-            Query<Object[]> query = session.createQuery(hql4, Object[].class);
+            Query<Object[]> query = session.createQuery(consulta, Object[].class);
             for (Object[] resultado : query.getResultList()) {
                 String hospitalNombre = (String) resultado[0];
                 String salaNombre = (String) resultado[1];

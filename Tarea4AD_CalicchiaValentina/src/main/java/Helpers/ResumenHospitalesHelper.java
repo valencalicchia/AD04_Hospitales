@@ -25,7 +25,7 @@ public class ResumenHospitalesHelper {
 
 		}
 
-	    public boolean existResumen(byte hospitalCod) {
+	    public boolean existsResumen(byte hospitalCod) {
 	        ResumenHospitales resumen = session.find(ResumenHospitales.class, hospitalCod);
 	        return resumen != null && resumen.getHospitales() != null;
 	    }

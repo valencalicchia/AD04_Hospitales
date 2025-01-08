@@ -33,6 +33,43 @@ public class Ejercicio1 {
 	           HibernateHelper.shutdown();
 	       }
     }
+    
+    private static void procesarNuevasSalas(Session session) {
+        NuevasSalasHelper nuevasSalasHelper = new NuevasSalasHelper(session);
+        List<NuevasSalas> nuevasSalas = nuevasSalasHelper.getAll();
+        
+        List<Sala> salas = nuevasSalas.stream()
+                .map(Ejercicio1::crearSalaDesdeNuevaSala)
+                .toList();
+        
+        guardarNuevasSalas(salas, session);
+    }
+    
+    private static Sala crearSalaDesdeNuevaSala(NuevasSalas nuevaSala) {
+        return new Sala(
+                new SalaId(nuevaSala.getId().getHospitalCod(), nuevaSala.getId().getSalaCod()),
+                null, nuevaSala.getId().getNombre(), nuevaSala.getId().getNumCama(), null, null
+        );
+    }
+    
+    private static void guardarNuevasSalas(List<Sala> salas, Session session) {
+        session.beginTransaction();
+        SalaHelper salaHelper = new SalaHelper(session);
+        HospitalesHelper hospitalesHelper = new HospitalesHelper(session);
+
+        for (Sala sala : salas) {
+        	System.out.println("Insertando (" + sala.getId().getHospitalCod() + ", " + sala.getId().getSalaCod() + ", "
+					+ sala.getNombre() + ", " + sala.getNumCama() + ")");
+            if (validarSala(sala, salaHelper, hospitalesHelper)) {
+                salaHelper.insertSala(sala);
+                System.out.printf("Sala(%d, %d) AÑADIDA...%n", sala.getId().getHospitalCod(), sala.getId().getSalaCod());
+            }
+            System.out.println();
+        }
+        session.getTransaction().commit();
+        listarSalas(session);
+    }
+    
 
     private static void listarSalas(Session session) {
         SalaHelper salaHelper = new SalaHelper(session);
@@ -74,24 +111,7 @@ public class Ejercicio1 {
                 hospital, salaInfo, sala.getNumCama(), sala.getOcupacions().size(), sala.getPlantillas().size());
     }
 
-    private static void guardarNuevasSalas(List<Sala> salas, Session session) {
-        session.beginTransaction();
-        SalaHelper salaHelper = new SalaHelper(session);
-        HospitalesHelper hospitalesHelper = new HospitalesHelper(session);
-
-        for (Sala sala : salas) {
-        	System.out.println("Insertando (" + sala.getId().getHospitalCod() + ", " + sala.getId().getSalaCod() + ", "
-					+ sala.getNombre() + ", " + sala.getNumCama() + ")");
-            if (validarSala(sala, salaHelper, hospitalesHelper)) {
-                salaHelper.insertSala(sala);
-                System.out.printf("Sala(%d, %d) AÑADIDA...%n", sala.getId().getHospitalCod(), sala.getId().getSalaCod());
-            }
-            System.out.println();
-        }
-        session.getTransaction().commit();
-        listarSalas(session);
-    }
-
+   
     private static boolean validarSala(Sala sala, SalaHelper salaHelper, HospitalesHelper hospitalesHelper) {
         String error = "";
         if (salaHelper.existSala(sala.getId())) {
@@ -108,24 +128,4 @@ public class Ejercicio1 {
         return true;
     }
 
-    private static void transformarNuevasSalas(List<NuevasSalas> nuevasSalas, Session session) {
-        List<Sala> salas = nuevasSalas.stream()
-                .map(Ejercicio1::crearSalaDesdeNuevaSala)
-                .toList();
-        
-        guardarNuevasSalas(salas, session);
-    }
-
-    private static Sala crearSalaDesdeNuevaSala(NuevasSalas nuevaSala) {
-        return new Sala(
-                new SalaId(nuevaSala.getId().getHospitalCod(), nuevaSala.getId().getSalaCod()),
-                null, nuevaSala.getId().getNombre(), nuevaSala.getId().getNumCama(), null, null
-        );
-    }
-
-    private static void procesarNuevasSalas(Session session) {
-        NuevasSalasHelper nuevasSalasHelper = new NuevasSalasHelper(session);
-        List<NuevasSalas> nuevasSalas = nuevasSalasHelper.getAll();
-        transformarNuevasSalas(nuevasSalas, session);
-    }
 }

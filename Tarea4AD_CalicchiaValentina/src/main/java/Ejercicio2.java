@@ -39,19 +39,19 @@ public class Ejercicio2 {
     private static void resumenHospitales(Session session) {
         ResumenHospitalesHelper resumenHelper = new ResumenHospitalesHelper(session);
         HospitalesHelper hospitalHelper = new HospitalesHelper(session);
-        obtenerResumenBbdd(hospitalHelper, resumenHelper, session);
+        getResumenes(hospitalHelper, resumenHelper, session);
         System.out.println();
         listarResumenHospitales(session);
     }
 
 
-    private static void obtenerResumenBbdd(HospitalesHelper hospitalHelper, ResumenHospitalesHelper resumenHelper,
+    private static void getResumenes(HospitalesHelper hospitalHelper, ResumenHospitalesHelper resumenHelper,
                                            Session session) {
         try {
             session.beginTransaction();
 
             hospitalHelper.getAll().forEach(hospital -> {
-                if (resumenHelper.existResumen(hospital.getHospitalCod())) {
+                if (resumenHelper.existsResumen(hospital.getHospitalCod())) {
                     System.out.println("Hospital Cod(" + hospital.getHospitalCod() + ") YA EXISTE, se actualiza...");
                     ResumenHospitales resumenActual = session.find(ResumenHospitales.class, hospital.getHospitalCod());
                     actualizarResumen(resumenActual, hospitalHelper, hospital);
